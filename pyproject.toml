@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "fintech-loan-modeling"
+version = "0.1.0"
+description = "Creating a FinTech Loan Model program"
+authors = ["repeckadonatas <repeckadonatas@yahoo.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

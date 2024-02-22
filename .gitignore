@@ -1,0 +1,7 @@
+.idea
+*.iml
+out
+gen
+/logs/*.log
+Source/logger/__pycache__
+Source/db_con_config/__pycache__

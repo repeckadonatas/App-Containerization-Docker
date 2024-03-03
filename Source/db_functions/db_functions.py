@@ -6,7 +6,7 @@ import pandas as pd
 from os import environ, path
 from dotenv import load_dotenv
 import Source.logger as log
-from sqlalchemy import URL, create_engine, text
+from sqlalchemy import URL, create_engine, text, Table, Column, Integer, String, MetaData
 
 db_logger = log.app_logger(__name__)
 
@@ -82,26 +82,23 @@ class MyDatabase:
         Returns a list of tables in a database.
         """
         try:
-            if self.engine.dialect.has_table(self.conn, 'weather_data'):
+            self.metadata = MetaData()
+            self.db_table = Table(
+                'table_name',
+                self.metadata,
+                Column('id', Integer, unique=True),
+                Column('name', String)
+            )
+
+            if self.engine.dialect.has_table(self.conn, 'table_name'):
                 db_logger.info('Table already exists.')
             else:
-                self.weather_data = """CREATE TABLE IF NOT EXISTS weather_data (
-                    id INT GENERATED ALWAYS AS IDENTITY UNIQUE,
-                    longitude FLOAT, latitude FLOAT, country_id INT, country VARCHAR(5), city VARCHAR(50),
-                    main_temp FLOAT, main_feels_like FLOAT, main_temp_min FLOAT, main_temp_max FLOAT, 
-                    date_vilnius TIMESTAMP WITHOUT TIME ZONE, date_local TIMESTAMP, timezone INT, 
-                    sunrise_local TIMESTAMP, sunset_local TIMESTAMP, weather_id INT, weather_main VARCHAR(20), 
-                    weather_description VARCHAR(100), weather_icon VARCHAR(50), pressure INT, humidity INT, 
-                    wind_speed FLOAT, wind_deg INT, clouds INT, visibility INT, base VARCHAR(20), 
-                    sys_type INT, sys_id INT, cod INT);"""
-
-                self.conn.execute(text(self.weather_data))
-                db_logger.info('Table was created successfully.')
+                self.metadata.create_all(self.engine)
+                db_logger.info('Table "{}" was created successfully.'.format(self.db_table))
 
             self.tables_in_db = self.conn.execute(text("""SELECT relname FROM pg_class 
-                                                       WHERE relkind='r' 
-                                                       AND relname !~ '^(pg_|sql_)';""")).fetchall()
-
+                                                                       WHERE relkind='r' 
+                                                                       AND relname !~ '^(pg_|sql_)';""")).fetchall()
             db_logger.info('Table(s) found in a database: {}'.format(self.tables_in_db))
             self.conn.rollback()
         except Exception as e:

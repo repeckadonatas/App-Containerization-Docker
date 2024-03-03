@@ -12,5 +12,6 @@ with MyDatabase() as db:
 
     try:
         env_config()
+        db.create_table()
     except Exception as e:
         main_logger.error('Exception occurred: {}'.format(e))

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
+from pathlib import Path
 import pandas as pd
-import Source.db_con_config as dbc
+from os import environ, path
+from dotenv import load_dotenv
 import Source.logger as log
 from sqlalchemy import URL, create_engine, text
 
@@ -15,6 +17,14 @@ and pass data to it.
 """
 
 
+def env_config():
+    basedir = Path(__file__).cwd() / 'Source/credentials'
+    dotenv_path = path.join(basedir, '.env')
+    load_dotenv(dotenv_path)
+
+    return environ
+
+
 class MyDatabase:
 
     def __init__(self):
@@ -23,13 +33,13 @@ class MyDatabase:
         Creates database URL using parsed configuration variables.
         """
         try:
-            self.params = dbc.get_config()
+            self.params = env_config()
             self.db_url = URL.create('postgresql+psycopg',
-                                     username=self.params['user'],
-                                     password=self.params['password'],
-                                     host=self.params['host'],
-                                     port=self.params['port'],
-                                     database=self.params['dbname'])
+                                     username=self.params.get('PGUSER'),
+                                     password=self.params.get('PGPASSWORD'),
+                                     host=self.params.get('PGHOST'),
+                                     port=self.params.get('PGPORT'),
+                                     database=self.params.get('PGDATABASE'))
         except Exception as err:
             db_logger.error("A configuration error has occurred: %s", err)
 
@@ -40,7 +50,7 @@ class MyDatabase:
         :return: connection to a database
         """
         try:
-            self.engine = create_engine(self.db_url)
+            self.engine = create_engine(self.db_url, pool_pre_ping=True)
             self.conn = self.engine.connect().execution_options(autocommit=True)
 
             db_logger.info("Connected to the database")

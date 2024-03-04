@@ -1,0 +1,14 @@
+name:
+
+version: '3'
+services:
+  project-db:
+    image: postgres:15
+    ports:
+      - 5432:5432
+
+    environment:
+      PGUSER
+
+  project-app:
+    image:

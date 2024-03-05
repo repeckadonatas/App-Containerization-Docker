@@ -1,14 +1,22 @@
 name:
 
 version: '3'
+
 services:
+  env_file:
+    - path: ./Source/credentials/.env
+      required: true
+
   project-db:
     image: postgres:15
     ports:
       - 5432:5432
 
-    environment:
-      PGUSER
-
   project-app:
     image:
+    environment:
+      - PG_USERNAME=${PGUSER}
+      - PG_PASSWORD=${PGPASSWORD}
+      - PG_HOST=${PGHOST}
+      - PG_PORT=${PGPORT}
+      - PG_DATABASE_NAME=${PGDATABASE}

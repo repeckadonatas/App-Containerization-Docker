@@ -1,0 +1,33 @@
+kaggle datasets download -d vikasukani/loan-eligible-dataset -p Source/get_data --unzip
+
+##################################################
+FOR CONCURRENT TASKS:
+
+class Script1:
+    def script1_method(self):
+        print("Script 1 executed.")
+
+class Script2:
+    def script2_method(self):
+        print("Script 2 executed.")
+
+def script3_function():
+    print("Script 3 executed.")
+
+
+
+import concurrent.futures
+from script1 import Script1
+from script2 import Script2
+from script3 import script3_function
+
+def run_scripts_concurrently():
+    # Create a ThreadPoolExecutor with max_workers as the number of concurrent tasks you want to run
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # List of tasks
+        tasks = [executor.submit(script1_instance.script1_method),
+                 executor.submit(script2_instance.script2_method),
+                 executor.submit(script3_function)]
+
+        # Wait for all tasks to complete
+        concurrent.futures.wait(tasks)

@@ -4,10 +4,12 @@ ENV <environmental-variable-1=variable-1>
     <environmental-variable-2=variable-2>
 
 RUN mkdir -p <container-directory>
+RUN mkdir -p ~/.kaggle
 
 RUN pip install poetry
 RUN poetry install --no-root
 
+COPY <source> <container-directory>
 COPY <source> <container-directory>
 COPY . <container-directory>
 

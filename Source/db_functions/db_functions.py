@@ -73,7 +73,7 @@ class KaggleDataDatabase:
         except (Exception, AttributeError) as err:
             db_logger.error("Connection was not closed: %s", err)
 
-    def create_table(self):
+    def create_tables(self):
         """
         Creates a table in a database if it does not exist.
         Returns a list of tables in a database.

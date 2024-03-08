@@ -1,22 +1,32 @@
 import os
+from pathlib import Path
 import Source.logger as log
 import Source.get_data as data
-from Source.db_functions.db_functions import MyDatabase
+from Source.db_functions.db_functions import KaggleDataDatabase
+
+import concurrent.futures
+import threading
+import time
+from queue import Queue
 
 
 main_logger = log.app_logger(__name__)
 
 # Path(__file__).parent.absolute()
 
+start = time.perf_counter()
+
+this_event = threading.Event()
 try:
-    data.get_data()
-    data.unzip_data()
-except Exception as e:
-    main_logger.info('Error while trying to download from kaggle: {}'.format(e))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        tasks = [executor.submit(data.get_data(), this_event),
+                 executor.submit(data.unzip_data(), this_event),
+                 executor.submit(KaggleDataDatabase().create_table(), this_event)]
 
-with MyDatabase() as db:
+    concurrent.futures.wait(tasks)
+except (Exception, ValueError) as e:
+    main_logger.error('Exception occurred: {}'.format(e))
 
-    try:
-        db.create_table()
-    except Exception as e:
-        main_logger.error('Exception occurred: {}'.format(e))
+end = time.perf_counter()
+
+main_logger.info(f'Process completed in {end - start} seconds')

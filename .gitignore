@@ -9,5 +9,6 @@ Source/db_functions/__pycache__
 Source/get_data/__pycache__
 Source/credentials/.env
 Source/.kaggle/*.json
-Source/data
-misc.txt
+Source/data/*.zip
+Source/data/*.csv
+/misc.txt

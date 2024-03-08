@@ -22,7 +22,7 @@ def env_config():
     return environ
 
 
-class MyDatabase:
+class KaggleDataDatabase:
 
     def __init__(self):
         """
@@ -80,18 +80,25 @@ class MyDatabase:
         """
         try:
             self.metadata = MetaData()
-            self.db_table = Table(
-                'table_name',
+            self.loan_test_table = Table(
+                'loan_test',
                 self.metadata,
                 Column('id', Integer, unique=True),
                 Column('name', String)
             )
 
-            if self.engine.dialect.has_table(self.conn, 'table_name'):
+            self.loan_train_table = Table(
+                'loan_train',
+                self.metadata,
+                Column('id', Integer, unique=True),
+                Column('name', String)
+            )
+
+            if self.engine.dialect.has_table(self.conn, 'loan_test', 'loan_train'):
                 db_logger.info('Table already exists.')
             else:
                 self.metadata.create_all(self.engine)
-                db_logger.info('Table "{}" was created successfully.'.format(self.db_table))
+                db_logger.info('Table "{}" was created successfully.'.format(self.metadata))
 
             self.tables_in_db = self.conn.execute(text("""SELECT relname FROM pg_class 
                                                                        WHERE relkind='r' 
@@ -99,7 +106,7 @@ class MyDatabase:
             db_logger.info('Table(s) found in a database: {}'.format(self.tables_in_db))
             self.conn.rollback()
         except Exception as e:
-            db_logger.info("An error occurred while creating a table: {}".format(e))
+            db_logger.error("An error occurred while creating a table: {}".format(e))
             self.conn.rollback()
 
     def load_to_database(self, dataframe: pd.DataFrame, table_name: str):
@@ -111,5 +118,5 @@ class MyDatabase:
         try:
             dataframe.to_sql(table_name, con=self.engine, if_exists='append', index=False)
         except Exception as e:
-            db_logger.info("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
+            db_logger.error("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
             self.conn.rollback()

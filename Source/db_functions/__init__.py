@@ -1,1 +1,1 @@
-from Source.db_functions.db_functions import MyDatabase
+from Source.db_functions.db_functions import KaggleDataDatabase

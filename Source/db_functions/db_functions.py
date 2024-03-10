@@ -2,8 +2,10 @@ from pathlib import Path
 import pandas as pd
 from os import environ, path
 from dotenv import load_dotenv
+from sqlalchemy import URL, create_engine, Table, Column, Integer, String, MetaData
+
 import Source.logger as log
-from sqlalchemy import URL, create_engine, text, Table, Column, Integer, String, MetaData
+import Source.data_preparation as dprep
 
 db_logger = log.app_logger(__name__)
 
@@ -94,20 +96,26 @@ class KaggleDataDatabase:
                 Column('name', String)
             )
 
-            if self.engine.dialect.has_table(self.conn, 'loan_test', 'loan_train'):
-                db_logger.info('Table already exists.')
-            else:
-                self.metadata.create_all(self.engine)
-                db_logger.info('Table "{}" was created successfully.'.format(self.metadata))
+            for table, metadata in self.metadata.tables.items():
+                if self.engine.dialect.has_table(self.conn, table):
+                    db_logger.info('Table "{}" already exists.'.format(table))
+                else:
+                    metadata.create(self.engine, checkfirst=True)
+                    db_logger.info('Table "{}" was created successfully.'.format(table))
 
-            self.tables_in_db = self.conn.execute(text("""SELECT relname FROM pg_class 
-                                                                       WHERE relkind='r' 
-                                                                       AND relname !~ '^(pg_|sql_)';""")).fetchall()
-            db_logger.info('Table(s) found in a database: {}'.format(self.tables_in_db))
             self.conn.rollback()
         except Exception as e:
             db_logger.error("An error occurred while creating a table: {}".format(e))
             self.conn.rollback()
+
+    def get_tables_in_db(self):
+        table_list = []
+        for table, metadata in self.metadata.tables.items():
+            if self.engine.dialect.has_table(self.conn, table):
+                table_list.append(table)
+        db_logger.info('Table(s) found in a database: {}'.format(table_list))
+
+        return table_list
 
     def load_to_database(self, dataframe: pd.DataFrame, table_name: str):
         """
@@ -116,7 +124,22 @@ class KaggleDataDatabase:
         :param table_name: table to load the data to.
         """
         try:
-            dataframe.to_sql(table_name, con=self.engine, if_exists='append', index=False)
+            dataframe.to_sql(table_name, con=self.engine, if_exists='replace', index=False)
         except Exception as e:
             db_logger.error("An error occurred while loading the data: {}. Rolling back the last transaction".format(e))
             self.conn.rollback()
+
+
+def kaggle_dataset_upload_to_db(queue, event):
+    with KaggleDataDatabase() as db:
+        try:
+            db.create_tables()
+
+            db_tables = db.get_tables_in_db()
+            for table in db_tables:
+                while not event.is_set() or not queue.empty():
+                    dataframe = queue.get()
+                    db.load_to_database(dataframe=dataframe, table_name=table)
+                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(queue, table))
+        except Exception as e:
+            db_logger.error("An error occurred while loading the data: {}.".format(e))

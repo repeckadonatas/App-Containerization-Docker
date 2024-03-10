@@ -21,16 +21,6 @@ def get_kaggle_credentials():
     return environ
 
 
-def get_files_in_directory():
-    files_in_path = os.scandir(PATH_TO_DATA)
-
-    list_of_files = []
-    for file in files_in_path:
-        if file.is_dir() or file.is_file():
-            list_of_files.append(file.name)
-    return list_of_files
-
-
 def get_data():
     try:
         environ['KAGGLE_CONFIG_DIR'] = str(KAGGLE_JSON_PATH / 'kaggle.json')
@@ -53,6 +43,16 @@ def get_data():
         kaggle_logger.error('An exception occurred while downloading Kaggle dataset: {}'.format(e))
 
 
+def get_files_in_directory():
+    files_in_path = os.scandir(PATH_TO_DATA)
+
+    list_of_files = []
+    for file in files_in_path:
+        if file.is_dir() or file.is_file():
+            list_of_files.append(file.name)
+    return list_of_files
+
+
 def unzip_data():
     try:
         files_to_unzip = get_files_in_directory()
@@ -67,3 +67,8 @@ def unzip_data():
                 break
     except FileNotFoundError:
         kaggle_logger.error('File(s) not found. Could not unzip anything.')
+
+
+def kaggle_dataset_download():
+    get_data()
+    unzip_data()

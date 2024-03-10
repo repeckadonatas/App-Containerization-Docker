@@ -12,3 +12,4 @@ Source/.kaggle/*.json
 Source/data/*.zip
 Source/data/*.csv
 /misc.txt
+Source/data_preparation/__pycache__/

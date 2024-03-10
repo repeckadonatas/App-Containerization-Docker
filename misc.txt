@@ -1,5 +1,7 @@
 kaggle datasets download -d vikasukani/loan-eligible-dataset -p Source/get_data --unzip
 
+# Path(__file__).parent.absolute()
+
 ##################################################
 FOR CONCURRENT TASKS:
 

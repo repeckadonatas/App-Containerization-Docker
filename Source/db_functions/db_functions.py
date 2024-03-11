@@ -84,16 +84,12 @@ class KaggleDataDatabase:
             self.metadata = MetaData()
             self.loan_test_table = Table(
                 'loan_test',
-                self.metadata,
-                Column('id', Integer, unique=True),
-                Column('name', String)
+                self.metadata
             )
 
             self.loan_train_table = Table(
                 'loan_train',
-                self.metadata,
-                Column('id', Integer, unique=True),
-                Column('name', String)
+                self.metadata
             )
 
             for table, metadata in self.metadata.tables.items():
@@ -136,10 +132,11 @@ def kaggle_dataset_upload_to_db(queue, event):
             db.create_tables()
 
             db_tables = db.get_tables_in_db()
-            for table in db_tables:
-                while not event.is_set() or not queue.empty():
-                    dataframe = queue.get()
+            while not event.is_set() or not queue.empty():
+                for table in db_tables:
+                    dataframe, file_name = queue.get()
                     db.load_to_database(dataframe=dataframe, table_name=table)
-                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(queue, table))
+                    db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))
+                    # queue.task_done()
         except Exception as e:
             db_logger.error("An error occurred while loading the data: {}.".format(e))

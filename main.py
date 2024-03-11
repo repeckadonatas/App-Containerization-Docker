@@ -14,9 +14,13 @@ main_logger = log.app_logger(__name__)
 start = time.perf_counter()
 
 event = threading.Event()
-queue = Queue()
+queue = Queue(maxsize=4)
 try:
-    with concurrent.futures.ThreadPoolExecutor(max_workers=7) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        # data_download = executor.submit(dw.kaggle_dataset_download())
+        # data_preparation = executor.submit(data.kaggle_dataset_preparation(queue, event))
+        # data_upload = executor.submit(db.kaggle_dataset_upload_to_db(queue, event))
+
         tasks = [executor.submit(dw.kaggle_dataset_download()),
                  executor.submit(data.kaggle_dataset_preparation(queue, event)),
                  executor.submit(db.kaggle_dataset_upload_to_db(queue, event))]

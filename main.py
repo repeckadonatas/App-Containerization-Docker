@@ -10,6 +10,13 @@ from queue import Queue
 
 main_logger = log.app_logger(__name__)
 
+"""
+Main program file to run the program
+using concurrent.futures module.
+The programs performance is also timed
+and printed to out.
+"""
+
 start = time.perf_counter()
 
 event = threading.Event()
@@ -25,5 +32,6 @@ except (Exception, ValueError, FileNotFoundError, IOError) as e:
     main_logger.error('Exception occurred: {}'.format(e))
 
 end = time.perf_counter()
-main_logger.info(f'Process completed in {end - start} seconds')
+print()
+main_logger.info('Process completed in {} seconds'.format(end-start))
 

@@ -2,9 +2,28 @@ kaggle datasets download -d vikasukani/loan-eligible-dataset -p Source/get_data 
 
 Path(__file__).parent.absolute()
 
+
+##################################################
+TO SEE ITEMS IN A QUEUE:
+
 queue_contents = list(queue.queue)
 for content, name in queue_contents:
     data_logger.info('Queue items:\n {}, {}'.format(name, content))
+
+##################################################
+ENOUGH TO CREATE TABLES.
+COLUMNS WILL BE CREATED BASED ON DATA BEING LOADED:
+
+self.metadata = MetaData()
+self.loan_test_table = Table(
+ 'loan_test',
+ self.metadata
+)
+
+self.loan_train_table = Table(
+ 'loan_train',
+ self.metadata
+)
 
 ##################################################
 FOR CONCURRENT TASKS:

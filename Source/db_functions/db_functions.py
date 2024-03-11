@@ -2,10 +2,9 @@ from pathlib import Path
 import pandas as pd
 from os import environ, path
 from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine, Table, Column, Integer, String, MetaData
+from sqlalchemy import URL, create_engine, Table, Column, String, Integer, Float, MetaData
 
 import Source.logger as log
-import Source.data_preparation as dprep
 
 db_logger = log.app_logger(__name__)
 
@@ -17,6 +16,10 @@ and pass data to it.
 
 
 def env_config():
+    """
+    Gets database connection credentials from .env file.
+    :return: environ
+    """
     basedir = Path(__file__).cwd() / 'Source/credentials'
     dotenv_path = path.join(basedir, '.env')
     load_dotenv(dotenv_path)
@@ -28,7 +31,7 @@ class KaggleDataDatabase:
 
     def __init__(self):
         """
-        Retrieves parsed config parameters from credentials.ini file.
+        Retrieves parsed config parameters from .env file.
         Creates database URL using parsed configuration variables.
         """
         try:
@@ -72,24 +75,49 @@ class KaggleDataDatabase:
             elif exc_val:
                 raise
 
-        except (Exception, AttributeError) as err:
+        except (Exception, AttributeError, exc_type, exc_val, exc_tb) as err:
             db_logger.error("Connection was not closed: %s", err)
 
     def create_tables(self):
         """
-        Creates a table in a database if it does not exist.
+        Creates tables in a database if they do not exist.
         Returns a list of tables in a database.
         """
         try:
             self.metadata = MetaData()
             self.loan_test_table = Table(
                 'loan_test',
-                self.metadata
+                self.metadata,
+                Column('loan_id', String(10)),
+                Column('gender', String(10)),
+                Column('married', String(5)),
+                Column('dependents', Integer()),
+                Column('education', String(15)),
+                Column('self_employed', String(5)),
+                Column('applicant_income', Integer()),
+                Column('coapplicant_income', Integer()),
+                Column('loan_amount', Float()),
+                Column('loan_amount_term', Float()),
+                Column('credit_history', Float()),
+                Column('property_area', String(10))
             )
 
             self.loan_train_table = Table(
                 'loan_train',
-                self.metadata
+                self.metadata,
+                Column('loan_id', String(10)),
+                Column('gender', String(10)),
+                Column('married', String(5)),
+                Column('dependents', Integer()),
+                Column('education', String(15)),
+                Column('self_employed', String(5)),
+                Column('applicant_income', Integer()),
+                Column('coapplicant_income', Integer()),
+                Column('loan_amount', Float()),
+                Column('loan_amount_term', Float()),
+                Column('credit_history', Float()),
+                Column('property_area', String(10)),
+                Column('loan_status', String(2))
             )
 
             for table, metadata in self.metadata.tables.items():
@@ -105,6 +133,9 @@ class KaggleDataDatabase:
             self.conn.rollback()
 
     def get_tables_in_db(self):
+        """
+        Returns a list of all the tables in the database.
+        """
         table_list = []
         for table, metadata in self.metadata.tables.items():
             if self.engine.dialect.has_table(self.conn, table):
@@ -127,6 +158,14 @@ class KaggleDataDatabase:
 
 
 def kaggle_dataset_upload_to_db(queue, event):
+    """
+    Setting up the sequence in which
+    to execute data upload to database.
+    The pandas DataFrame's of the CSV files
+    are taken from a queue.
+    The dataframe is then loaded into a corresponding
+    table in the database.
+    """
     with KaggleDataDatabase() as db:
         try:
             db.create_tables()

@@ -137,6 +137,6 @@ def kaggle_dataset_upload_to_db(queue, event):
                     dataframe, file_name = queue.get()
                     db.load_to_database(dataframe=dataframe, table_name=table)
                     db_logger.info('Dataframe "{}" loaded to a table "{}"'.format(file_name, table))
-                    # queue.task_done()
+                    queue.task_done()
         except Exception as e:
             db_logger.error("An error occurred while loading the data: {}.".format(e))

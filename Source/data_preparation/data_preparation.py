@@ -45,7 +45,7 @@ def kaggle_dataset_preparation(queue, event):
             for csv_file in csv_files:
                 csv_to_df = create_dataframe(csv_file)
                 data_logger.info('A dataframe was created for a file: {}'.format(csv_file))
-                queue.put(csv_to_df, csv_file)
+                queue.put([csv_to_df, csv_file])
 
             event.set()
         except Exception as e:

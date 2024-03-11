@@ -1,6 +1,10 @@
 kaggle datasets download -d vikasukani/loan-eligible-dataset -p Source/get_data --unzip
 
-# Path(__file__).parent.absolute()
+Path(__file__).parent.absolute()
+
+queue_contents = list(queue.queue)
+for content, name in queue_contents:
+    data_logger.info('Queue items:\n {}, {}'.format(name, content))
 
 ##################################################
 FOR CONCURRENT TASKS:

@@ -85,10 +85,10 @@ Example:
 
 *Using Docker services from a Docker compose file:*
 
-- `docker-compose -f <file-name.yaml> up`     <-- to start the containers specified in the file
+- `docker compose -f <file-name.yaml> up`     <-- to start the containers specified in the file
 
 
-- `docker-compose -f <file-name.yaml> down`     <-- to stop the containers and remove them and the network
+- `docker compose -f <file-name.yaml> down`     <-- to stop the containers and remove them and the network
 
 For the app to use your own app Image, modify the YAML file to contain the following:  
 
@@ -96,6 +96,10 @@ For the app to use your own app Image, modify the YAML file to contain the follo
         services:  
             <your-image-name>:  
                 image: <image-repository-name>/<your-image-name>:<TAG>
+
+If there are problems running `docker-compose.yaml` file with .env variables:
+
+- `docker compose -f <file-name.yaml> --env-file <path/to/envfile/.env> up`
 
 ## ***Dockerfile***
 

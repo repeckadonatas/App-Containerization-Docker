@@ -12,7 +12,6 @@ RUN mkdir -p ~/.kaggle
 COPY . /app
 COPY Source/.kaggle/kaggle.json ~/.kaggle
 
-RUN pip install poetry
-RUN poetry install --no-root
+RUN pip install poetry && poetry install
 
 CMD ["python", "main.py"]

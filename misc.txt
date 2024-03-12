@@ -56,3 +56,8 @@ def run_scripts_concurrently():
 
         # Wait for all tasks to complete
         concurrent.futures.wait(tasks)
+
+##################################################
+TO START DOCKER FROM YAML WITH .ENV VARIABLES:
+
+docker compose -f docker-compose.yaml --env-file Source/credentials/.env up

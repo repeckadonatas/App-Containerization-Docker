@@ -134,9 +134,13 @@ Dockerfile allows to build a **Docker Image** from your own application. Dockerf
 
 To build a Docker Image after setting up a Dockerfile:  
 
-`docker build -t <our-image-name>:<TAG> .`    <- `-t` option allows to TAG an image.
+`docker build -t <app-image-name>:<TAG> .`    <- `-t` option allows to TAG an image.
                                                 `.` here is a location of a Dockerfile  
                                                 (current directory of an app where the Dockerfile is contained).
+
+To push Docker Image to DockerHub:
+
+`docker push <your-user-name>/<app-image-name>:<TAG>`
 
 **Note:**
 

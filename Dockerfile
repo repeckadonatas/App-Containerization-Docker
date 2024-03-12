@@ -1,16 +1,18 @@
 FROM python:3.11
 
-ENV <environmental-variable-1=variable-1>
-    <environmental-variable-2=variable-2>
+RUN pip install -U \
+    pip \
+    setuptools \
+    wheel
 
-RUN mkdir -p <container-directory>
+WORKDIR /app
+
 RUN mkdir -p ~/.kaggle
+
+COPY . /app
+COPY /app/Source/.kaggle/kaggle.json ~/.kaggle
 
 RUN pip install poetry
 RUN poetry install --no-root
 
-COPY <source> <container-directory>
-COPY <source> <container-directory>
-COPY . <container-directory>
-
-CMD ["param1", "param2"]
+CMD ["python", "main.py"]

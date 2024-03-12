@@ -1,20 +1,31 @@
-name:
-
 version: '3'
 
 services:
   project-db:
     image: postgres:15
+    restart: always
+    env_file:
+      - app/Source/credentials/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 5432:5432
+    volumes:
+      - project-db-data:/var/lib/postgresql/data
 
   project-app:
-    image:
+    image: kaggle-data-download-app:1.0
+    command: python main.py
     env_file:
-      - Source/credentials/.env
+      - app/Source/credentials/.env
     environment:
       - PG_USERNAME=${PGUSER}
       - PG_PASSWORD=${PGPASSWORD}
       - PG_HOST=${PGHOST}
       - PG_PORT=${PGPORT}
       - PG_DATABASE_NAME=${PGDATABASE}
+
+volumes:
+  project-db-data:
+    driver: local

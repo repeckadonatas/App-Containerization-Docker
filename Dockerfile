@@ -10,7 +10,7 @@ WORKDIR /app
 RUN mkdir -p ~/.kaggle
 
 COPY . /app
-COPY /app/Source/.kaggle/kaggle.json ~/.kaggle
+COPY Source/.kaggle/kaggle.json ~/.kaggle
 
 RUN pip install poetry
 RUN poetry install --no-root

@@ -1,22 +1,25 @@
 # FinTech Loan Modelling
 
 
-## About(FIX)
+## About
 
-This project is an exercise in building a working data pipeline model. The model sends API requests to openweathermap.org and retrieves weather data for 20 of the largest cities in Europe. The data is requested every hour. After the data is downloaded, it is then transformed and prepared to be uploaded to the database. The model uses Threading as a concurrency method. Threading is suitable when looking to parallelize heavy I/O work, such as HTTP calls, reading from files and processing data. 
+This project is an exercise in building a working data pipeline model that would be later containerized for easier future replication on other machines and systems. The program retrieves two CSV files that are a part of **[Loan Eligible Dataset](https://www.kaggle.com/datasets/vikasukani/loan-eligible-dataset)** from Kaggle. After the data is downloaded, it is then transformed and prepared to be uploaded to the database. The program uses Threading as a concurrency method. Threading is suitable when looking to parallelize heavy I/O work, such as HTTP calls, reading from files and processing data.
 
 
-## Tech Stack Used(FIX)
+## Tech Stack Used
 
 * Programing language - **Python**;
 * Servers and load balancing - for this project, data is stored locally on the machine;
 * Data storage and querying - **PostgreSQL**;
 * For testing data preparation functions - **Jupyter Notebook**;
 * Data cleaning and normalization - **Pandas**;
-* Package and dependency management - **Poetry**
+* Package and dependency management - **Poetry**;
+* Containerization - **Docker**
 
 
-## How To Use The Program(FIX)
+## How To Use The Program
+
+### 1. Using manually locally
 
 Prior to running the program, dependencies from `pyproject.toml` file should be installed. Use `Poetry` package to install project dependencies:
 * `pip install poetry`
@@ -25,59 +28,62 @@ Prior to running the program, dependencies from `pyproject.toml` file should be 
 The basic usage on `Poetry` is **[here](https://python-poetry.org/docs/basic-usage/#installing-dependencies)**.
 Once dependency installation is completed, the program can now be used. 
 
-To use the program, run the _`main.py`_ file. Once started, the API data download will begin, followed by data preparation and then data upload to a table on a database.
+To use the program, run the _`main.py`_ file. Once started, the API data download will begin, followed by data preparation and then data upload to respective tables on a database.
 
-The program runs automatically on a set schedule (once per hour every day). The schedule is set using cron. Alternatively, a schedule is also set using Windows Task Scheduler.
 
-Currently, the program retrieves data of the 20 largest cities in **[Europe](https://en.wikipedia.org/wiki/List_of_European_cities_by_population_within_city_limits)** (source: Wikipedia). If the need arises to get the data for more cities, a name, country and the coordinates of a city must be placed in a text file in `Source/locations/locations.txt` in the same format as other cites (**especially** the coordinates).
+### 2. Using Docker
+
+To run the program in a Docker container, in the terminal window run `docker compose -f docker-compose.yaml up` command. The Docker compose YAML file should be on a target machine first. This will use **PostgreSQL** database image from docker.io and the image of the program from Docker Hub.
+
+\
+**Note:**
 
 Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run. 
 
-**Note:** 
 - To restart the program, run _`main.py`_ again.
 
 ### **Important:**
 
-To connect to the database, the `Source/db_config/config.py` file needs to read these values from `credentials.ini` file:
+1. **For database connection:**
 
-| [name-of-credentials]    |
-|--------------------------|
-| user = user_name         | 
-| password = user_password | 
-| host = host_name         |
-| port = port              |
-| dbname =  database_name  |
+To connect to the database, the `Source/db_functions/db_functions.py` file needs to read these values from `.env` file:
 
-Store the `credentials.ini` file in `Source/credentials/` folder to connect to the database with no issues.
+|                             |
+|-----------------------------|
+| PGUSER = db_username        | 
+| PGPASSWORD = user_password  | 
+| PGHOST = host_name          |
+| PGPORT = port               |
+| PGDATABASE =  database_name |
+\
+1.1. **For PostgreSQL Docker image:**
 
-For API connection, API key is needed. It should be stored in `api_key.txt` file in `Source/credentials/` folder.
+When using Docker, **PostgreSQL** needs POSTGRES_PASSWORD environment variable to be passed. For this reason the YAML file reads POSTGRES_PASSWORD environment variable from `.env` file.
 
-The SQL queries to run analytical queries against weather data in a database are stored in `misc` folder. SQL uses PostgreSQL dialect. 
+\
+2. **For Kaggle API to work:**
 
+Kaggle API usage is set up using the official Kaggle **[documentation](https://www.kaggle.com/docs/api)** (**[Kaggle GitHub](https://github.com/Kaggle/kaggle-api)**). Kaggle API requires a **kaggle.json** file to be stored in a home directory. For Windows it is `C:\Users\<user_name>\.kaggle`. For Unix systems it is `~/.kaggle`. The file can be generated by signing up to Kaggle and going into your account settings. The code implements a workaround for this JSON file location, but it might not work properly (might be a Kaggle API problem). For this reason, the Dockerfile copies the **kaggle.json** file from the source of the program to `/home/.kaggle/` location in Docker image, so no problems should occur. For redundancy and workaround reasons, `.env` file also needs to contain **kaggle.json** credentials:
 
-## Input Dataset Preparation(FIX)
+|                                   |
+|-----------------------------------|
+| KAGGLE_USERNAME = kaggle_username | 
+| KAGGLE_KEY = kaggle_api_key       |
 
-A successful response to an API call produces a JSON file that is then stored in `Source/data/input` folder.
+\
+**Note:**
 
-None of the data is removed. It is supplemented by an additional datetime column `date_vilnius`, which displays date and time adjusted to UTC+2 time zone.
-
-There are three (3) changes done to data. First is how the data is displayed in the database after upload. The change consist of simple column reorder. The second change is to the names of the columns as after flattening the JSON file the column names do not match the snake case standard for naming. A third change is to local time. The column `date_local` displays a current datetime value of the city from where the weather data was taken.
-
-Datetime values are converted to conform to **[ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html)** standard.
-
-In some cases, the JSON data can be missing some of the values of the table. In such cases those missing values are stored as NULL values.
-
-Also, API response can contain a wrong value for `city` column in a table. After further inspection, it seems that the value is corresponding to a street name or a part of city. In such cases casting values to preferred names in SQL queries can remove the confusion. In such cases the coordinates are a source of truth.
-
-Examples:
-* **Madrid** sometimes can be presented as **Sol**;
-* **Munich** sometimes can be presented as **Altstadt**;
-* etc.
-
-To check the coordinates, you can use a webpage such as **[this](https://www.gps-coordinates.net/)**.
+When using the code manually locally, store the `.env` file in `Source/credentials/` folder to connect to the database and use the Kaggle API with no issues. Also make sure that **kaggle.json** file is stored in a home directory as well as in `Source/.kaggle/`. For Windows the home directory is `C:\Users\<user_name>\.kaggle`. For Unix systems it is `~/.kaggle`.
 
 
-## Concurrency method used(FIX)
+## Input Dataset Preparation
+
+A successful response to an API call produces a ZIP file that is then stored in `Source/data/` folder. Then the ZIP file contents are extracted in the same location.
+
+There is only one (1) change done to both dataframes of CSV data - the names of the columns are changed to conform to snake case.
+
+
+## Concurrency method used
 
 The program uses Threading as concurrency method to fetch, transform and upload the data. Threading is suitable when looking to parallelize heavy I/O work, such as HTTP calls, reading from files and processing data. 
 
@@ -86,15 +92,3 @@ The `concurrent.futures` module allows for an easier way to run multiple tasks s
 
 
 Using **ThreadPoolExecutor** subclass uses a pool of threads to execute calls asynchronously. All threads enqueued to **ThreadPoolExecutor** will be joined before the interpreter can exit.
-
-
-## Creating Fake Weather Data(FIX)
-
-To test some of the analytical functionality using SQL queries I created a SQL query to generate random data and upload it into a separate table. Later I created a view to join the table with fake data with table with real data. Then this view is used to run analytical SQL queries. The SQL to generate the data is stored in `misc/fake_weather_data_sql.sql` file.
-
-
-## Future Improvements (FIX)
-
-* Avoid using raw SQL statements as it makes database prone to SQL injection attacks;
-* Implement monitoring for a database;
-* Implement regular database backups.

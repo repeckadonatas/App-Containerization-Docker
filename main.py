@@ -33,5 +33,4 @@ except (Exception, ValueError, FileNotFoundError, IOError) as e:
 
 end = time.perf_counter()
 print()
-main_logger.info('Process completed in {} seconds'.format(end-start))
-
+main_logger.info('Process completed in {} seconds\n'.format(end-start))

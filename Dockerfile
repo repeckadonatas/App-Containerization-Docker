@@ -42,6 +42,5 @@ RUN pwd
 RUN whoami
 
 EXPOSE 5432
-EXPOSE 80
 
 CMD ["poetry", "run", "python3", "/app/main.py"]

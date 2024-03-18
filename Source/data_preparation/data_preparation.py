@@ -84,7 +84,6 @@ def kaggle_dataset_preparation(queue, event):
                 csv_to_df = create_dataframe(csv_file)
                 new_col_names = change_column_names(csv_to_df)
                 data_logger.info('A dataframe was created for a file: {}'.format(csv_file))
-                # queue.put([csv_to_df, csv_file])
                 queue.put([new_col_names, csv_file])
             print()
             event.set()

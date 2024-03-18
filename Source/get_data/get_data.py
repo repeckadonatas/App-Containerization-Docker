@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 from zipfile import ZipFile
 from pathlib import Path
 from dotenv import load_dotenv
@@ -57,7 +56,6 @@ def get_data():
 
     except (Exception, IOError) as e:
         kaggle_logger.error('An exception occurred while downloading Kaggle dataset: {}'.format(e))
-        # sys.exit(1)
 
 
 def get_files_in_directory() -> list:
@@ -87,7 +85,6 @@ def unzip_data(zip_file: str):
         kaggle_logger.info('File unzipped successfully: {}\n'.format(archive))
     except FileNotFoundError:
         kaggle_logger.error('File(s) not found. Could not unzip anything.')
-        # sys.exit(1)
 
 
 def kaggle_dataset_download():
@@ -104,4 +101,3 @@ def kaggle_dataset_download():
             pass
         else:
             kaggle_logger.info('No files to unzip')
-            # sys.exit(1)

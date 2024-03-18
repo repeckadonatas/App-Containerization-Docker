@@ -1,4 +1,4 @@
 logs/*.log
 misc.txt
 235.ipynb
-.venv
+.venv/Source/data_preparation/data_preparation.ipynb

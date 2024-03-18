@@ -12,6 +12,5 @@ Source/.kaggle/*.json
 Source/data/*.zip
 Source/data/*.csv
 Source/data_preparation/__pycache__/
-Source/data_preparation/data_preparation.ipynb
+/Source/data_preparation/data_preparation.ipynb
 /misc.txt
-.venv

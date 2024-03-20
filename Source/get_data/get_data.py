@@ -27,7 +27,7 @@ def get_kaggle_credentials() -> os.environ:
     basedir = Path(__file__).cwd() / 'Source/credentials'
     dotenv_path = os.path.join(basedir, '.env')
     find_dotenv(dotenv_path)
-    load_dotenv(find_dotenv(dotenv_path), verbose=True)
+    load_dotenv(find_dotenv(dotenv_path, usecwd=True), verbose=True)
 
     return os.environ
 
@@ -40,20 +40,28 @@ def get_data():
     either from kaggle.json file or from .env file.
     """
     try:
+        api = kaggle.KaggleApi()
         os.environ['KAGGLE_CONFIG_DIR'] = str((KAGGLE_JSON_PATH / 'kaggle.json').absolute())
         os.chmod(os.environ['KAGGLE_CONFIG_DIR'], 600)
 
-        if Path(KAGGLE_JSON_PATH / 'kaggle.json').is_file():
+        if (os.environ['KAGGLE_CONFIG_DIR']
+                and Path(KAGGLE_JSON_PATH / 'kaggle.json').is_file()):
             with open(KAGGLE_JSON_PATH / 'kaggle.json', 'r', encoding='utf-8') as kaggle_file:
                 kaggle_credentials = json.load(kaggle_file)
             kaggle_credentials.get('username')
             kaggle_credentials.get('key')
+
+            print('Kaggle username: ', kaggle_credentials.get('username'))
+            print('Kaggle key: ', kaggle_credentials.get('key'))
         else:
             get_kaggle_credentials().get('KAGGLE_USERNAME')
             get_kaggle_credentials().get('KAGGLE_KEY')
 
-        kaggle.api.authenticate()
-        kaggle.api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
+            print('KAGGLE_USERNAME: ', get_kaggle_credentials().get('KAGGLE_USERNAME'))
+            print('KAGGLE_KEY: ', get_kaggle_credentials().get('KAGGLE_KEY'))
+
+        api.authenticate()
+        api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
         kaggle_logger.info('Downloaded Kaggle dataset.')
 
     except (Exception, IOError) as e:

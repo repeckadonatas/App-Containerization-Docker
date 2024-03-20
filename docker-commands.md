@@ -212,6 +212,13 @@ example:
 
 
 **Note:**
+\
+If there are issues in creating a database:
+
+- Make sure to first use `docker compose down` command;
+- Run `docker volume ls` to check on existing volumes;
+- Run `docker volume rm <volume-name>` to remove a volume that is causing issues;
+- Run `docker compose up` command again to recreate a database.
 
 If an application needs to be able to share files between multiple replicas,  
 create volumes with a driver that supports writing files to an external storage system like NFS or Amazon S3.

@@ -28,8 +28,8 @@ try:
                  executor.submit(db.kaggle_dataset_upload_to_db(queue, event))]
 
     concurrent.futures.wait(tasks)
-except (Exception, ValueError, FileNotFoundError, IOError) as e:
-    main_logger.error('Exception occurred: {}'.format(e))
+except Exception as e:
+    main_logger.error('Exception occurred while running "main.py": {}'.format(e))
 
 end = time.perf_counter()
 print()

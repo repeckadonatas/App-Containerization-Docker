@@ -1,8 +1,9 @@
 from pathlib import Path
 import pandas as pd
 from os import environ, path
-from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine, Table, Column, String, Integer, Float, MetaData
+from dotenv import load_dotenv, find_dotenv
+from sqlalchemy.engine import URL
+from sqlalchemy import create_engine, Table, Column, String, Integer, Float, MetaData
 
 import Source.logger as log
 
@@ -22,7 +23,7 @@ def env_config():
     """
     basedir = Path(__file__).cwd() / 'Source/credentials'
     dotenv_path = path.join(basedir, '.env')
-    load_dotenv(dotenv_path)
+    load_dotenv(find_dotenv(dotenv_path, usecwd=True))
 
     return environ
 

@@ -15,29 +15,30 @@ RUN pip install -U \
 
 RUN pip install poetry==$POETRY_VERSION
 
+ENV HOME=/root
+
+RUN mkdir -p $HOME/.kaggle
+COPY Source/.kaggle/kaggle.json $HOME/.kaggle
+
+RUN ls -la $HOME
+RUN ls -la $HOME/.kaggle/
+
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./
 
-RUN ls -la ./
-RUN ls -la /
-
 RUN poetry install --no-root
 
-RUN mkdir -p /home/.kaggle
-RUN ls -la /home
-
 COPY . ./
-COPY ./Source/.kaggle/kaggle.json /home/.kaggle/
-
-RUN ls -la ./Source/.kaggle/
-RUN ls -la /home/.kaggle/
 
 RUN ls -la /app
 RUN ls -la /app/Source
+RUN ls -la /app/Source/.kaggle/
 
-RUN chmod 600 /home/.kaggle/kaggle.json
+RUN chmod +x ./init.sql
+RUN chmod +x init.sql
 
+RUN echo ~
 RUN pwd
 RUN whoami
 

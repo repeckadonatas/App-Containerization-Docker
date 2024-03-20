@@ -1,12 +1,12 @@
 FROM python:3.11-bookworm
 
 ENV POETRY_VERSION=1.8.1
-#ENV POETRY_HOME=/opt/poetry
-#ENV PATH="${PATH}:${POETRY_HOME}/bin/poetry"
-#
-#ENV VIRTUAL_ENV=/opt/venv
-#RUN python3 -m venv $VIRTUAL_ENV
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV POETRY_HOME=/opt/poetry
+ENV PATH="${PATH}:${POETRY_HOME}/bin/poetry"
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip install -U \
     pip \

@@ -2,7 +2,7 @@ import json
 import os
 from zipfile import ZipFile
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 import kaggle
 import Source.logger as log
@@ -26,7 +26,9 @@ def get_kaggle_credentials() -> os.environ:
     """
     basedir = Path(__file__).cwd() / 'Source/credentials'
     dotenv_path = os.path.join(basedir, '.env')
-    load_dotenv(dotenv_path, verbose=True)
+    find_dotenv(dotenv_path)
+    load_dotenv(find_dotenv(dotenv_path), verbose=True)
+
     return os.environ
 
 

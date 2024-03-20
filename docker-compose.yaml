@@ -4,27 +4,39 @@ services:
   project-db:
     image: postgres:15
     restart: always
+    ports:
+      - '5432:5432'
     env_file:
       - Source/credentials/.env
     environment:
+      - POSTGRES_USER=$/{POSTGRES_USER}
       - POSTGRES_PASSWORD=$/{POSTGRES_PASSWORD}
-    ports:
-      - 5432:5432
+      - POSTGRES_DB=kaggle-data-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 15s
+      retries: 5
     volumes:
       - project-db-data:/var/lib/postgresql/data
 
   project-app:
     image: notexists/kaggle-data-download-app:1.0
-#    volumes:
-#      - .:/app
+    depends_on:
+      project-db:
+        condition: service_healthy
+    #    volumes:
+    #      - .:/app
     env_file:
       - Source/credentials/.env
     environment:
-      - PG_USERNAME=$/{PGUSER}
-      - PG_PASSWORD=$/{PGPASSWORD}
-      - PG_HOST=$/{PGHOST}
-      - PG_PORT=$/{PGPORT}
-      - PG_DATABASE_NAME=$/{PGDATABASE}
+      - PGUSER=$/{PGUSER}
+      - PGPASSWORD=$/{PGPASSWORD}
+      - PGHOST=$/{PGHOST}
+      - PGPORT=5432
+      - PGDATABASE=$/{PGDATABASE}
+      - KAGGLE_USERNAME=$/{KAGGLE_USERNAME}
+      - KAGGLE_KEY=$/{KAGGLE_KEY}
 
 volumes:
   project-db-data:

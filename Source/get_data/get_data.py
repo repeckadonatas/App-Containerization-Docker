@@ -4,6 +4,7 @@ from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 
 import kaggle
+from kaggle.api.kaggle_api_extended import ApiException
 import Source.logger as log
 
 kaggle_logger = log.app_logger(__name__)
@@ -44,7 +45,7 @@ def get_data():
         api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
         kaggle_logger.info('Downloaded Kaggle dataset.')
 
-    except (Exception, IOError) as e:
+    except (Exception, IOError, ApiException) as e:
         kaggle_logger.error('An exception occurred while downloading Kaggle dataset: {}'.format(e))
 
 

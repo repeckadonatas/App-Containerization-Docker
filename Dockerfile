@@ -21,9 +21,6 @@ RUN poetry install --no-root
 
 COPY . .
 
-ENV KAGGLE_USERNAME=${KAGGLE_USERNAME}
-ENV KAGGLE_KEY=${KAGGLE_KEY}
-
 RUN pip install --upgrade kaggle
 
 RUN ls -la /app
@@ -31,7 +28,6 @@ RUN ls -la /app/Source
 
 RUN chmod +x ./init.sql
 
-RUN echo ~
 RUN pwd
 RUN whoami
 

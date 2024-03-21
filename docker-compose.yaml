@@ -28,6 +28,7 @@ services:
 
   project-app:
     image: notexists/kaggle-data-download-app:1.0
+    #command: tail -F anything # to keep app running for testing purposes
     depends_on:
       project-db:
         condition: service_healthy

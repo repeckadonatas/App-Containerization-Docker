@@ -1,10 +1,10 @@
 import os
+import time
 from zipfile import ZipFile
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 
 import kaggle
-from kaggle.api.kaggle_api_extended import ApiException
 import Source.logger as log
 
 kaggle_logger = log.app_logger(__name__)
@@ -34,19 +34,32 @@ def get_data():
     Gets data from kaggle.com using Kaggle API.
     The data is saved in a set folder.
     For authentication, Username and API key are retrieved
-    either from kaggle.json file or from .env1 file.
+    either from kaggle.json file or from .env file.
     """
-    try:
-        os.environ['KAGGLE_CONFIG_DIR'] = str((KAGGLE_JSON_PATH / 'kaggle.json').absolute())
-        os.chmod(os.environ['KAGGLE_CONFIG_DIR'], 600)
+    retries = 3
+    delay = 5
 
-        api = kaggle.KaggleApi()
-        api.authenticate()
-        api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
-        kaggle_logger.info('Downloaded Kaggle dataset.')
+    for attempt in range(retries):
+        try:
 
-    except (Exception, IOError, ApiException) as e:
-        kaggle_logger.error('An exception occurred while downloading Kaggle dataset: {}'.format(e))
+            os.environ['KAGGLE_CONFIG_DIR'] = str((KAGGLE_JSON_PATH / 'kaggle.json').absolute())
+            os.chmod(os.environ['KAGGLE_CONFIG_DIR'], 600)
+
+            api = kaggle.KaggleApi()
+            api.authenticate()
+            api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
+            kaggle_logger.info('Downloaded Kaggle dataset.')
+
+            break
+
+        except (Exception, IOError) as e:
+            kaggle_logger.error('An exception occurred while downloading Kaggle dataset: {}'.format(e))
+
+            if attempt < retries - 1:
+                kaggle_logger.info(f'Retrying in {delay} seconds...')
+                time.sleep(delay)
+            else:
+                kaggle_logger.info('All retries exhausted...')
 
 
 def get_files_in_directory() -> list:

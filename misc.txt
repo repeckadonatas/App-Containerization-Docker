@@ -142,3 +142,8 @@ FROM GET_DATA.PY FILE:
         #     print('KAGGLE_KEY: ', get_kaggle_credentials().get('KAGGLE_KEY'))
 
         # api.authenticate()
+
+############################################################
+DOCKER COMPOSE:
+
+command: tail -F anything # to keep app running for testing purposes

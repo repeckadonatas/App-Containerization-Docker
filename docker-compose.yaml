@@ -33,16 +33,14 @@ services:
         condition: service_healthy
     env_file:
       - .env
-      - Source/credentials/.env
     environment:
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - PGHOST=${PGHOST}
-      - PGPORT=5432
-      - PGDATABASE=${PGDATABASE}
-      - KAGGLE_CONFIG_DIR=$/{KAGGLE_CONFIG_DIR}
-      - KAGGLE_USERNAME=$/{KAGGLE_USERNAME}
-      - KAGGLE_KEY=$/{KAGGLE_KEY}
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGHOST: ${PGHOST}
+      PGPORT: ${PGPORT}
+      PGDATABASE: ${PGDATABASE}
+      KAGGLE_USERNAME: ${KAGGLE_USERNAME}
+      KAGGLE_KEY: ${KAGGLE_KEY}
 
 volumes:
   project-db-data:

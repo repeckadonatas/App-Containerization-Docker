@@ -1,4 +1,3 @@
-import json
 import os
 from zipfile import ZipFile
 from pathlib import Path
@@ -15,7 +14,7 @@ Data is downloaded from kaggle.com
 and stored in a set location.
 """
 
-KAGGLE_JSON_PATH = Path(__file__).cwd() / 'Source/.kaggle'
+KAGGLE_JSON_PATH = Path(__file__).cwd() / 'Source/.kaggle/'
 PATH_TO_DATA = Path(__file__).cwd() / 'Source/data/'
 
 
@@ -24,10 +23,7 @@ def get_kaggle_credentials() -> os.environ:
     Gets kaggle credentials from .env file.
     :return: environ
     """
-    basedir = Path(__file__).cwd() / 'Source/credentials'
-    dotenv_path = os.path.join(basedir, '.env')
-    find_dotenv(dotenv_path)
-    load_dotenv(find_dotenv(dotenv_path, usecwd=True), verbose=True)
+    load_dotenv(find_dotenv('.env'))
 
     return os.environ
 
@@ -37,29 +33,13 @@ def get_data():
     Gets data from kaggle.com using Kaggle API.
     The data is saved in a set folder.
     For authentication, Username and API key are retrieved
-    either from kaggle.json file or from .env file.
+    either from kaggle.json file or from .env1 file.
     """
     try:
-        api = kaggle.KaggleApi()
         os.environ['KAGGLE_CONFIG_DIR'] = str((KAGGLE_JSON_PATH / 'kaggle.json').absolute())
         os.chmod(os.environ['KAGGLE_CONFIG_DIR'], 600)
 
-        if (os.environ['KAGGLE_CONFIG_DIR']
-                and Path(KAGGLE_JSON_PATH / 'kaggle.json').is_file()):
-            with open(KAGGLE_JSON_PATH / 'kaggle.json', 'r', encoding='utf-8') as kaggle_file:
-                kaggle_credentials = json.load(kaggle_file)
-            kaggle_credentials.get('username')
-            kaggle_credentials.get('key')
-
-            print('Kaggle username: ', kaggle_credentials.get('username'))
-            print('Kaggle key: ', kaggle_credentials.get('key'))
-        else:
-            get_kaggle_credentials().get('KAGGLE_USERNAME')
-            get_kaggle_credentials().get('KAGGLE_KEY')
-
-            print('KAGGLE_USERNAME: ', get_kaggle_credentials().get('KAGGLE_USERNAME'))
-            print('KAGGLE_KEY: ', get_kaggle_credentials().get('KAGGLE_KEY'))
-
+        api = kaggle.KaggleApi()
         api.authenticate()
         api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
         kaggle_logger.info('Downloaded Kaggle dataset.')

@@ -73,7 +73,7 @@ Kaggle API usage is set up using the official Kaggle **[documentation](https://w
 \
 **Note:**
 
-When using the code manually locally, store the `.env` file in `Source/credentials/` folder to connect to the database and use the Kaggle API with no issues. Also make sure that **kaggle.json** file is stored in a home directory as well as in `Source/.kaggle/`. For Windows the home directory is `C:\Users\<user_name>\.kaggle`. For Unix systems it is `~/.kaggle`.
+When using the code manually locally, store the `.env` file in the root directory of the project folder to connect to the database and use the Kaggle API with no issues. Also make sure that **kaggle.json** file is stored in a home directory as well as in `Source/.kaggle/`. For Windows the home directory is `C:\Users\<user_name>\.kaggle`. For Unix systems it is `~/.kaggle`.
 
 
 ## Input Dataset Preparation

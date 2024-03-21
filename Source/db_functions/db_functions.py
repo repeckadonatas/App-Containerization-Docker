@@ -1,6 +1,5 @@
-from pathlib import Path
 import pandas as pd
-from os import environ, path
+from os import environ
 from dotenv import load_dotenv, find_dotenv
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine, Table, Column, String, Integer, Float, MetaData
@@ -21,9 +20,7 @@ def env_config():
     Gets database connection credentials from .env file.
     :return: environ
     """
-    basedir = Path(__file__).cwd() / 'Source/credentials'
-    dotenv_path = path.join(basedir, '.env')
-    load_dotenv(find_dotenv(dotenv_path, usecwd=True))
+    load_dotenv(find_dotenv('.env', usecwd=True))
 
     return environ
 
@@ -32,7 +29,7 @@ class KaggleDataDatabase:
 
     def __init__(self):
         """
-        Retrieves parsed config parameters from .env file.
+        Retrieves parsed config parameters from .env1 file.
         Creates database URL using parsed configuration variables.
         """
         try:

@@ -7,12 +7,13 @@ Source/logger/__pycache__
 Source/db_con_config/__pycache__
 Source/db_functions/__pycache__
 Source/get_data/__pycache__
-Source/credentials/.env
+Source/credentials/.env1
 Source/.kaggle/*.json
 Source/data/*.zip
 Source/data/*.csv
 Source/data_preparation/__pycache__/
 /Source/data_preparation/data_preparation.ipynb
 /misc.txt
+misc.txt
 .venv
 .env

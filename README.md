@@ -54,6 +54,7 @@ To connect to the database, the `Source/db_functions/db_functions.py` file needs
 | PGHOST = host_name          |
 | PGPORT = port               |
 | PGDATABASE =  database_name |
+
 \
 1.1. **For PostgreSQL Docker image:**
 

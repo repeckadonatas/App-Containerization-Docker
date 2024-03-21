@@ -47,7 +47,8 @@ def get_data():
 
             api = kaggle.KaggleApi()
             api.authenticate()
-            api.dataset_download_files('vikasukani/loan-eligible-dataset', path=PATH_TO_DATA)
+            dataset = 'vikasukani/loan-eligible-dataset'
+            api.dataset_download_files(dataset, path=PATH_TO_DATA)
             kaggle_logger.info('Downloaded Kaggle dataset.')
 
             break

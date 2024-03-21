@@ -9,7 +9,6 @@ This project is an exercise in building a working data pipeline model that would
 ## Tech Stack Used
 
 * Programing language - **Python**;
-* Servers and load balancing - for this project, data is stored locally on the machine;
 * Data storage and querying - **PostgreSQL**;
 * For testing data preparation functions - **Jupyter Notebook**;
 * Data cleaning and normalization - **Pandas**;

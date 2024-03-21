@@ -9,7 +9,7 @@ This project is an exercise in building a working data pipeline model that would
 ## Tech Stack Used
 
 * Programing language - **Python**;
-* Data storage and querying - **PostgreSQL**;
+* Data storage and querying - **PostgreSQL**, **Adminer**;
 * For testing data preparation functions - **Jupyter Notebook**;
 * Data cleaning and normalization - **Pandas**;
 * Package and dependency management - **Poetry**;

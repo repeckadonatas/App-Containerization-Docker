@@ -5,6 +5,9 @@ RUN pip install -U \
     setuptools \
     wheel
 
+RUN mkdir -p /root/.kaggle
+COPY Source/.kaggle/kaggle.json /root/.kaggle
+
 ENV POETRY_VERSION=1.8.1
 ENV POETRY_HOME=/usr/local
 ENV POETRY_VIRTUALENVS_CREATE=false
@@ -13,7 +16,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 - --version=$POETRY_VE
 
 WORKDIR /app
 
-RUN python -m venv /venv
+RUN python3 -m venv /venv
 
 COPY poetry.lock pyproject.toml ./
 
@@ -21,12 +24,8 @@ RUN poetry install --no-root
 
 COPY . .
 
-RUN pip install --upgrade kaggle
-
 RUN ls -la /app
 RUN ls -la /app/Source
-
-RUN chmod +x ./init.sql
 
 RUN pwd
 RUN whoami

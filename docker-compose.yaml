@@ -24,12 +24,10 @@ services:
     depends_on:
       project-db:
         condition: service_healthy
-    #env_file:
-      #- '.env'
     environment:
       PGUSER: ${PGUSER}
       PGPASSWORD: ${PGPASSWORD}
-      PGHOST: ${PGHOST}
+      PGHOST: host.docker.internal
       PGPORT: ${PGPORT}
       PGDATABASE: ${PGDATABASE}
       KAGGLE_USERNAME: ${KAGGLE_USERNAME}

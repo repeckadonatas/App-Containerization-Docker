@@ -1,22 +1,15 @@
-version: '3'
+version: '3.8'
 
 services:
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - '8080:8080'
-
   project-db:
     image: postgres:15
     restart: always
     ports:
       - '5432:5432'
-    env_file:
-      - .env
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 1s
@@ -27,15 +20,10 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   project-app:
-    #build:
-      #context: .
-      #dockerfile: Dockerfile
     image: notexists/kaggle-data-download-app:1.0
     depends_on:
       project-db:
         condition: service_healthy
-    env_file:
-      - .env
     environment:
       PGUSER: ${PGUSER}
       PGPASSWORD: ${PGPASSWORD}
@@ -44,7 +32,10 @@ services:
       PGDATABASE: ${PGDATABASE}
       KAGGLE_USERNAME: ${KAGGLE_USERNAME}
       KAGGLE_KEY: ${KAGGLE_KEY}
+    volumes:
+      - C:\Users\HP\Desktop\TURING\Projects\Module 2\FinTech-Loan-Modeling\logs:/app/logs/
 
 volumes:
   project-db-data:
     driver: local
+  project-logs:

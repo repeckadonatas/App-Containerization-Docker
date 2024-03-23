@@ -18,7 +18,33 @@ This project is an exercise in building a working data pipeline model that would
 
 ## How To Use The Program
 
-### 1. Using manually locally
+### 1. Using Docker
+
+To run the program in a Docker container:
+- Download the `docker-compose.yaml` file of this project.
+- In the terminal window run `docker compose -f docker-compose.yaml up` command.
+- For **presentation purposes**, environment variables are already in the environment of app's Docker Image.
+
+\
+For a **Production application:**
+- Create and store `.env` file in the same folder as `docker-compose.yaml`.
+- The Docker Image should be rebuilt to take into account the `.env` files variables and the Image itself should be stored in a secure Image container.
+
+\
+Running the project with Docker will use **PostgreSQL** database image from `https://hub.docker.com/_/postgres/` and the image of **FinTech-Loan-Modelling** app from my publicly available **[Docker Hub](https://hub.docker.com/repository/docker/notexists/kaggle-data-download-app/general)** repository.
+The Docker compose YAML file should be on a target machine first.
+
+**Note:**
+
+Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run.
+
+
+When running `docker-compose.yaml` on a target machine, in order to store logs, the `volumes` section for the `project-app` should be adjusted accordingly.
+
+- To restart the program, run `docker compose -f docker-compose.yaml down` and then `docker compose -f docker-compose.yaml up`.
+
+
+### 2. Running manually locally
 
 Prior to running the program, dependencies from `pyproject.toml` file should be installed. Use `Poetry` package to install project dependencies:
 * `pip install poetry`
@@ -29,17 +55,12 @@ Once dependency installation is completed, the program can now be used.
 
 To use the program, run the _`main.py`_ file. Once started, the API data download will begin, followed by data preparation and then data upload to respective tables on a database.
 
-
-### 2. Using Docker
-
-To run the program in a Docker container, in the terminal window run `docker compose -f docker-compose.yaml up` command. The Docker compose YAML file should be on a target machine first. This will use **PostgreSQL** database image from docker.io and the image of the program from Docker Hub.
-
 \
 **Note:**
 
-Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run. 
+Every time the program runs, a log file is created in `logs` folder for that day. Information about any subsequent run is appended to the log file of that day. The program logs every data download, data transformation and data upload to the database. Errors are also logged into the same log file for the current day of the run.
 
-- To restart the program, run _`main.py`_ again.
+- To restart the program, run _`main.py`_ again if the app is being run locally.
 
 ### **Important:**
 
@@ -58,7 +79,11 @@ To connect to the database, the `Source/db_functions/db_functions.py` file needs
 \
 1.1. **For PostgreSQL Docker image:**
 
-When using Docker, **PostgreSQL** needs POSTGRES_PASSWORD environment variable to be passed. For this reason the YAML file reads POSTGRES_PASSWORD environment variable from `.env` file.
+When using Docker, **PostgreSQL** needs POSTGRES_USER and POSTGRES_PASSWORD environment variables to be passed. For this reason the YAML file reads these environment variables from `.env` file.
+
+1.2 **To Connect to a PostgreSQL database from OUTSIDE the Docker container:**
+
+When connecting to a database from **outside** the Docker container, for connection parameters in database connection window use PORT, DATABASE, USER and PASSWORD variables (HOST variable is not needed in most cases. If needed, use `host.docker.internal`).
 
 \
 2. **For Kaggle API to work:**

@@ -83,23 +83,6 @@ class KaggleDataDatabase:
         """
         try:
             self.metadata = MetaData()
-            self.loan_test_table = Table(
-                'loan_test',
-                self.metadata,
-                Column('loan_id', String(10)),
-                Column('gender', String(10)),
-                Column('married', String(5)),
-                Column('dependents', Integer()),
-                Column('education', String(15)),
-                Column('self_employed', String(5)),
-                Column('applicant_income', Integer()),
-                Column('coapplicant_income', Integer()),
-                Column('loan_amount', Float()),
-                Column('loan_amount_term', Float()),
-                Column('credit_history', Float()),
-                Column('property_area', String(10))
-            )
-
             self.loan_train_table = Table(
                 'loan_train',
                 self.metadata,
@@ -116,6 +99,23 @@ class KaggleDataDatabase:
                 Column('credit_history', Float()),
                 Column('property_area', String(10)),
                 Column('loan_status', String(2))
+            )
+
+            self.loan_test_table = Table(
+                'loan_test',
+                self.metadata,
+                Column('loan_id', String(10)),
+                Column('gender', String(10)),
+                Column('married', String(5)),
+                Column('dependents', Integer()),
+                Column('education', String(15)),
+                Column('self_employed', String(5)),
+                Column('applicant_income', Integer()),
+                Column('coapplicant_income', Integer()),
+                Column('loan_amount', Float()),
+                Column('loan_amount_term', Float()),
+                Column('credit_history', Float()),
+                Column('property_area', String(10))
             )
 
             for table, metadata in self.metadata.tables.items():

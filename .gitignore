@@ -19,3 +19,5 @@ misc.txt
 .env
 /docker-commands.md
 /docker-workflow.md
+docker-compose-2.yaml
+Dockerfile2

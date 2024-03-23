@@ -17,3 +17,5 @@ Source/data_preparation/__pycache__/
 misc.txt
 .venv
 .env
+/docker-commands.md
+/docker-workflow.md
